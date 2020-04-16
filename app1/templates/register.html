@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册新用户</title>
+    <script type="text/javascript" src="/static/jquery.js"></script>
+    <script type="text/javascript">
+        function checkPwd() {
+            var p1 = document.getElementById("password").value;
+            var p2 = document.getElementById("password2").value;
+            if (p1 == ""){
+                alert("密码不能为空");
+                return false
+            }
+            if (p1!=p2){
+                 alert("密码不一致");
+                 return false
+            }
+        }
+    </script>
+</head>
+<body>
+<div>
+    <form method="post" action="/users/register" onsubmit="return checkPwd()">
+        <table>
+            <tbody>
+                <tr>
+                    <td>用户名 : </td>
+                    <td><input type="text" value="请输入用户名" name="username"></td>
+                </tr>
+                <tr>
+                    <td>密码 : </td>
+                    <td><input type="text" value="请输入密码" name="password" id="password1"></td>
+                </tr>
+                <tr>
+                    <td>确认密码 : </td>
+                    <td><input type="text" value="请确认密码" name="password2" id="password2"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="注册">
+                    </td>
+                    <td>
+                        <a href="/user/login"><input type="button" value="登陆" ></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </form>
+</div>
+
+</body>
+</html>

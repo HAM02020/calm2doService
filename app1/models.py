@@ -1,8 +1,7 @@
 from django.db import models
 
-
 class TInfo(models.Model):
-    user_id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey('TUser', models.DO_NOTHING)
     finish_count = models.PositiveIntegerField(blank=True, null=True)
     interrupt_count = models.IntegerField(blank=True, null=True)
     duration = models.DateTimeField(blank=True, null=True)
@@ -21,7 +20,6 @@ class TPet(models.Model):
     class Meta:
         managed = True
         db_table = 't_pet'
-        unique_together = (('pet_id', 'user'),)
 
 
 class TTimes(models.Model):
@@ -33,7 +31,6 @@ class TTimes(models.Model):
     class Meta:
         managed = True
         db_table = 't_times'
-        unique_together = (('info_id', 'user'),)
 
 
 class TUser(models.Model):
@@ -44,3 +41,12 @@ class TUser(models.Model):
     class Meta:
         managed = True
         db_table = 't_user'
+
+class UserToken(models.Model):
+    token_id = models.AutoField(primary_key=True)
+    token = models.CharField(max_length=128)
+    user = models.OneToOneField(to="TUser",on_delete=models.CASCADE)
+    class Meta:
+        managed = True
+        db_table = 't_user_token'
+
