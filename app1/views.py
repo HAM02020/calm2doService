@@ -60,7 +60,6 @@ class Login(APIView):
             email_or_name = request._request.POST["email"]
             password = request._request.POST["password"]
 
-
             user_obj = TUser.objects.filter(user_email=email_or_name,user_password=password).first()
             user_obj = user_obj if user_obj else TUser.objects.filter(user_name=email_or_name,user_password=password).first()
 
@@ -77,7 +76,7 @@ class Login(APIView):
                 result["msg"] = "用户名或密码错误！"
         except Exception as e :
             result["code"] = 2
-            result["msg"] = str(e)
+            result["msg"] = "chuxianwenti"
         return Response(result)
 
 class UserViewSet(viewsets.ModelViewSet):
