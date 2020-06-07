@@ -26,9 +26,11 @@ class TPet(models.Model):
 
 class TTimes(models.Model):
     user = models.ForeignKey('TUser', on_delete=models.CASCADE)
-    info_id = models.AutoField(primary_key=True)
+    time_id = models.AutoField(primary_key=True)
     from_time = models.DateTimeField(blank=True, null=True)
     to_time = models.DateTimeField(blank=True, null=True)
+    set_time = models.DateTimeField(blank = True,null = True)
+    is_finish = models.IntegerField(blank=True,null = True)
 
     class Meta:
         managed = True
@@ -51,7 +53,7 @@ class TUser(models.Model):
 
 class Friend(models.Model):
     user = models.ForeignKey('TUser',on_delete=models.CASCADE)
-    firend_id = models.IntegerField(max_length=11)
+    firend_id = models.IntegerField(max_length=11,blank=True,null=True)
     remark_name = models.CharField(max_length=50,blank=True, null=True)
     class Meta:
         managed = True
