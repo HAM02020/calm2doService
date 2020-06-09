@@ -222,10 +222,19 @@ class EndJx(APIView):
                     times.is_finish = 0
                     times.save()
 
+                    if deltaTime < 5400:
+                        rewardText = "完成静学的时间,超过全球92%的用户！"
+                    if deltaTime < 3600:
+                        rewardText = "完成静学的时间,超过全球83%的用户！"
+                    if deltaTime < 1800:
+                        rewardText = "完成静学的时间,超过全球67%的用户！"
+                    else:
+                        rewardText = "完成静学的时间,超过全球99%的用户！"
 
                     result['code'] = 2
                     result['msg'] = '静学失败!'
                     result['duration'] = deltaTime
+                    result['rewardText'] = rewardText
                 else:
                     times.to_time = now
                     times.is_finish=1
