@@ -6,7 +6,7 @@ class TInfo(models.Model):
     user = models.ForeignKey('TUser', on_delete=models.CASCADE)
     finish_count = models.PositiveIntegerField(blank=True, null=True)
     interrupt_count = models.IntegerField(blank=True, null=True)
-    duration = models.DateTimeField(blank=True, null=True)
+    duration = models.CharField(max_length=11,blank=True, null=True)
 
     class Meta:
         managed = True
@@ -30,7 +30,7 @@ class TTimes(models.Model):
     from_time = models.DateTimeField(blank=True, null=True)
     to_time = models.DateTimeField(blank=True, null=True)
     set_time = models.DateTimeField(blank = True,null = True)
-    is_finish = models.IntegerField(blank=True,null = True)
+    is_finish = models.IntegerField(blank=True,null = True,default=0)
 
     class Meta:
         managed = True
@@ -53,7 +53,7 @@ class TUser(models.Model):
 
 class Friend(models.Model):
     user = models.ForeignKey('TUser',on_delete=models.CASCADE)
-    firend_id = models.IntegerField(max_length=11,blank=True,null=True)
+    firend_id = models.IntegerField(blank=True,null=True)
     remark_name = models.CharField(max_length=50,blank=True, null=True)
     class Meta:
         managed = True

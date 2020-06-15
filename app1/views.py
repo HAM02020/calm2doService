@@ -215,38 +215,114 @@ class EndJx(APIView):
                     result['code'] = 2
                     result['msg'] = '静学失败!重复请求接口'
                     return Response(result)
-                deltaTime = now - times.from_time
+                deltaTime = times.set_time - now
                 #如果时间差大于10秒 则JX失败
-                if (deltaTime - timedelta(seconds=10)).seconds > 10:
+                if deltaTime.total_seconds() > 10:
                     times.to_time = now
                     times.is_finish = 0
                     times.save()
 
-                    if deltaTime < 5400:
-                        rewardText = "完成静学的时间,超过全球92%的用户！"
-                    if deltaTime < 3600:
-                        rewardText = "完成静学的时间,超过全球83%的用户！"
-                    if deltaTime < 1800:
-                        rewardText = "完成静学的时间,超过全球67%的用户！"
-                    else:
-                        rewardText = "完成静学的时间,超过全球99%的用户！"
+                    info = TInfo.objects.filter(user=user)
+                    if not info:
+                        info = TInfo.objects.create(user=user, finish_count=0, interrupt_count=0)
+                    info = TInfo.objects.get(user=user)
+
+                    info.interrupt_count += 1
+                    info.save()
+
 
                     result['code'] = 2
                     result['msg'] = '静学失败!'
                     result['duration'] = deltaTime
-                    result['rewardText'] = rewardText
+
                 else:
                     times.to_time = now
                     times.is_finish=1
                     times.save()
+                    deltaTime = times.set_time - times.to_time
+                    deltaTime = deltaTime.total_seconds()
+                    if deltaTime < 5400:
+                        rewardText = "完成静学的时间,超过全球92%的用户！"
+                    elif deltaTime < 3600:
+                        rewardText = "完成静学的时间,超过全球83%的用户！"
+                    elif deltaTime < 1800:
+                        rewardText = "完成静学的时间,超过全球67%的用户！"
+                    else:
+                        rewardText = "完成静学的时间,超过全球99%的用户！"
+
+                    info = TInfo.objects.filter(user=user)
+                    if not info:
+                        info = TInfo.objects.create(user=user,finish_count=0,interrupt_count=0)
+                    info = TInfo.objects.get(user=user)
+
+                    info.interrupt_count += 1
+                    info.save()
+
+
 
                     result['code'] = 1
                     result['msg'] = '静学完成!'
                     result['reward'] = '获得的奖励数量'
                     result['duration'] = deltaTime
+                    result['rewardText'] = rewardText
 
         except Exception as e:
 
             result['code'] = "2"
             result['msg'] = str(e)
+        return Response(result)
+
+class JXInfo(APIView):
+    authentication_classes = [UserAuth, CsrfExemptSessionAuthentication]
+
+    def get(self, request):
+        result = {}
+        try:
+            user = request.user
+            info = TInfo.objects.get(user=user)
+
+            #1 完成的次数
+            finish_count = 0
+
+            # 2 失败的次数
+            fail_count = 0
+
+            # 3 完成的时间
+            finish_duration = timedelta(seconds=0).total_seconds()
+
+            # 4 多久的时候失败
+            fail_times = []
+
+            timeSets = TTimes.objects.filter(user=user)
+            for t in timeSets:
+
+                #成功
+                if(t.is_finish == 1):
+                    finish_count += 1
+                    finish_duration += (t.set_time - t.from_time).total_seconds()
+                #失败
+                else:
+                    if not t.to_time:
+                        continue
+                    fail_dict = {}
+                    fail_count += 1
+                    fail_duration = (t.to_time - t.from_time).total_seconds()
+                    fail_dict['duration'] = fail_duration
+                    fail_dict['time'] = t.from_time
+                    fail_dict['set_time'] = (t.set_time - t.from_time).total_seconds()
+                    fail_times.append(fail_dict)
+
+            #把数据 写入respone字典
+            result['code'] = 1
+            result['msg'] = 'success'
+            result['finish_count'] = finish_count
+            result['fail_count'] = fail_count
+            result['finish_duration'] = finish_duration
+            result['fail_times'] = fail_times
+
+        except Exception as e:
+
+            result['code'] = "2"
+            result['msg'] = str(e)
+
         return Response(result)

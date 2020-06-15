@@ -9,4 +9,5 @@ urlpatterns = [
     path('login',views.Login.as_view()),
     path('beginjx',views.BeginJx.as_view()),
     path('endjx',views.EndJx.as_view()),
+    path('jxinfo',views.JXInfo.as_view()),
 ]
